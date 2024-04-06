@@ -24,7 +24,7 @@ const reactionSchema = new Schema(
       },
       //   TODO: Use a getter to format the timestamp on query
     },
-  },
+  }, 
   {
     toJSON: {
       getters: true,
