@@ -1,43 +1,44 @@
 const { Schema, model } = require("mongoose");
-const reactionSchema = require("./Reaction");
+const Reaction = require("./Reaction");
 
+// Schema to create User model
 const thoughtSchema = new Schema(
   {
     thoughtText: {
       type: String,
       required: true,
-      minlenth: 1,
-      maxlength: 280,
+      minLenth: 1,
+      maxLength: 280,
     },
-    //   - Set default value to the current timestamp
     createdAt: {
       type: Date,
       default: Date.now,
-      get: (timestamp) => new Date(timestamp).toLocaleString(),
+      // This is the function that formats the time.
+      get: function (timestamp) {
+        return timestamp.toLocaleString();
+      },
+      // TODO: Getter for formatting the timestamp on query.
     },
     username: {
+      // TODO: Refrence the user making the thought. Unsure if ref:user is correct, it is probably not.
       type: String,
-      required: true,
+      ref: "user",
     },
-    // - `reactions` (These are like replies)
-    //   - Array of nested documents created with the `reactionSchema`
-    reactions: [reactionSchema],
+    reactions: [Reaction],
   },
   {
-    //   - Use a getter method to format the timestamp on query
     toJSON: {
-      getters: true,
       virtuals: true,
+      getters: true,
     },
     id: false,
   }
 );
-// Create a virtual called `reactionCount` that retrieves the length of the thought's `reactions` array field on query.
+
 thoughtSchema.virtual("reactionCount").get(function () {
   return this.reactions.length;
 });
 
-const Thought = model("Thought", thoughtSchema);
+const Thought = model("thought", thoughtSchema);
 
-//export the model
 module.exports = Thought;

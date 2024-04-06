@@ -1,16 +1,16 @@
-//import modules
 const express = require("express");
+const db = require("./config/connection");
+const routes = require("./routes");
 
-//setting port default value
-const PORT = process.env.PORT || 3001;
-//creating exppress app
+const PORT = 3001;
 const app = express();
 
-//middleware to parse imcoming request bodies as JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(routes);
 
-//once databse is open start the server and listen for incoming requests
-app.listen(PORT, () => {
-  console.log(`API server running on port ${PORT}!`);
+db.once("open", () => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}!`);
+  });
 });

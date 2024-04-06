@@ -1,6 +1,6 @@
-// **User**:
-const { Schema, model, Types } = require("mongoose");
+const { Schema, model } = require("mongoose");
 
+// Schema to create User model
 const userSchema = new Schema(
   {
     username: {
@@ -11,31 +11,26 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      unique: true,
       required: true,
-      //   - Must match a valid email address
+      unique: true,
       validate: {
+        // Regex that validates email.
         validator: function (v) {
-          return /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(
-            //regex validator
-            v
-          );
+          return /.+\@.+\..+./.test(v);
         },
+        message: (props) => `${props.value} is not a valid email address`,
       },
     },
-
     thoughts: [
-      //   - Array of `_id` values referencing the `Thought` model
       {
         type: Schema.Types.ObjectId,
-        ref: "Thought",
+        ref: "thought",
       },
     ],
     friends: [
       {
-        //   - Array of `_id` values referencing the `/User` model (self-reference)
         type: Schema.Types.ObjectId,
-        ref: "User",
+        ref: "user",
       },
     ],
   },
@@ -47,12 +42,12 @@ const userSchema = new Schema(
   }
 );
 
-// Create a virtual called `friendCount` that retrieves the length of the user's `friends` array field on query.
 userSchema.virtual("friendCount").get(function () {
   return this.friends.length;
 });
 
-const User = model("User", userSchema);
+const User = model("user", userSchema);
 
-//export the model
 module.exports = User;
+
+// 65e7f5a1ad272da62dc38f13
